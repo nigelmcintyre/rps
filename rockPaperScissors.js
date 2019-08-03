@@ -1,3 +1,4 @@
+//randomly selects rock, paper or scissors
 function computerPlay(){
     let rock = 'rock', paper = 'paper', scissors = 'scissors';
     let result;
@@ -12,20 +13,12 @@ function computerPlay(){
     return result;
 }
 
-
-
-
-let playerScore = 0;
-let compScore = 0;
-
+//compares players and computers selection to determine the winner of that round.
 function playRound(playerSelection, compSelection) {
     let possibleGame = [["rock","rock"],["rock","paper"],["rock","scissors"],["paper","paper"],["paper","rock"],["paper","scissors"],["scissors","scissors"],["scissors","rock"],["scissors","paper"]];
     let currentGame = [playerSelection, compSelection];
     let tempArr = [];
 
-    let compResult = computerPlay();
-    let caseResult = prompt("Choose your weapon: rock, paper or scissors");
-    let humanResult = caseResult.toLowerCase();
     //for every possible game scenario
     for(let i = 0; i < possibleGame.length; i++){
         //temporary array to hold each individual game scenario to be compared to the current game.
@@ -38,60 +31,69 @@ function playRound(playerSelection, compSelection) {
             //if current game matches element at 1, 5 or 7, wins, increase computer score.
             } else if(tempArr == possibleGame[1] || tempArr == possibleGame[5] || tempArr == possibleGame[7]){
                 console.log(currentGame[1] + " beats " + currentGame[0] + ", you loose!");
+                gameCount++;
                 compScore++;
             //if current game matches element at 2, 4 or 8 of possibleGame array, the game is a draw.
             } else {
                 console.log(currentGame[0] + " beats " + currentGame[1] + ", you win!");
-                humanScore++;
+                playerScore++;
+                gameCount++;
             }
         }
     }
+}
 
-function game(){
-    let gameCount = 0;
-    while (gameCount <= 5) {
+//keeps track of points and displays winner either after 5 games or if a player is two clear points ahead.
+function game(compScore, playerScore){  
 
-        playRound(humanResult,compResult);
-        
-    }
+    let compClearPoints = 0;
+    let playerClearPoints = 0;
+    //checks if a player is two clear points ahead
     if(compScore > playerScore){
-        console.log("The machines have won, score: \n Computer: " + compScore + "\nYou: " + playerScore  );
+       compClearPoints = compScore - playerScore;
     } else {
-        console.log("Humankind has prevailed, score : \n You: " + playerScore + "\nComputer: " + compScore );
+        playerClearPoints = playerScore - compScore; 
+    }
+    //best out of five or 2 clear points
+    if(gameCount == 5 ){
+        if(compScore > playerScore || compClearPoints >= 2 ){
+            console.log("The machines have won, score: \n Computer: " + compScore + "\nYou: " + playerScore  );
+        } else if(playerScore > compScore || playerClearPoints >=2){
+            console.log("Humankind has prevailed, score: \nYou: " + playerScore + "\nComputer: " + compScore );
+        }
+
     }
 }
-
-game();
-
-   /* let result;
-    if(playerSelection == 'rock' && compSelection == 'rock'){
-        result = "Draw, play again";
-    } else if (playerSelection == 'rock' && compSelection == 'paper') {
-        result = "Paper beats rock, you lose";
-        
-    } else if (playerSelection == 'rock' && compSelection == 'scissors') {
-        result = "Rock beats scissors, you win";
-        
-    } else if (playerSelection == 'paper' && compSelection == 'paper') {
-        result = "Draw, play again";
-        
-    } else if (playerSelection == 'paper' && compSelection == 'rock') {
-        result = "Paper beats rock, you win";
-        
-    } else if (playerSelection == 'paper' && compSelection == 'scissors') {
-        result = "Scissors beats paper, you lose";
-        
-    } else if (playerSelection == 'scissors' && compSelection == 'scissors') {
-        result = "Draw, play again";
-        
-    } else if (playerSelection == 'scissors' && compSelection == 'paper') {
-        result = "Scissors beats paper, you win";
-        
-    } else if (playerSelection == 'scissors' && compSelection == 'rock') {
-        result = "Rock beats scissors, you losr";
-    }
-    console.log(result);
-    */
+//takes in users selection
+function getUserInput(){
+    let caseResult = prompt("Choose your weapon: rock, paper or scissors");
+    humanResult = caseResult.toLowerCase();
 }
+
+let playerScore = 0;
+let compScore = 0; 
+let gameCount = 0;
+let humanResult = "";
+
+while(gameCount<5){
+
+    let compResult = computerPlay();
+    //check that user enters valid input
+    try {
+        getUserInput();
+        if(!humanResult == "rock" || !humanResult == "paper" || !humanResult == "scissors" || humanResult == "" ){
+            throw error = "Please enter rock, paper or scissors"
+        }
+        
+    } catch (error) {
+        console.log(error);
+        getUserInput();
+    }
+    
+    playRound(humanResult,compResult);
+    game(compScore,playerScore);
+
+}
+
 
 
