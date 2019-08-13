@@ -3,9 +3,212 @@
     <head>
         <meta charset="UTF-8">
         <title>Rock, paper, scissors</title>
-        <script src="rockPaperScissors.js"></script>
+        <!--<script src="rockPaperScissors.js"></script>-->
+        <style>
+            body{
+               /* background-image: url(background.jpg);
+                background-size: 100%;*/
+            }
+            #scoreContainer{
+                margin-left: auto;
+                margin-right: auto;
+                display: block;
+                border: solid 2px black;
+                
+
+            }
+            h1{
+                text-align: center;
+            }
+            h2{
+                display: inline;
+            }
+            
+            #buttonContainer{
+                margin: 5% 0% 5% 5%;
+                width: 14%;
+                height: 700px;
+                border: solid 2px black;
+                display: block;
+
+            }
+
+            #gameArea{
+                margin: 5% 0% 5% 20%;
+                border: solid 2px black;
+                height: 700px;
+                width: 50%;
+                text-align: center;
+                
+            }
+            #selection{
+               
+               
+                display: block;
+                
+                height: 30%;
+                width: 100%;
+                border-radius:50%;
+            }
+
+            
+            .playerSelection{
+                height: 100%; 
+                width: 100%;
+                border-radius:50%;
+
+            }
+
+            #paper:hover, #rock:hover, #scissors:hover{
+    
+                transform: scale(1.1);
+
+            } 
+        </style>
     </head>
     <body>
+        <div id="scoreContainer">
+            <h1>Score</h1>
+            <h2>Player:</h2>
+            <h2>Machines:</h2>
+            <p id="totalScore">0/5</p>
+            <p id="gameResult"></p>
+            <p id="printPlayer">0</p>
+            <p id="printComp">0</p>
+        </div>
+        <div id="buttonContainer">
+            <button id="rock" class="selection"><img src="rock.PNG" class="playerSelection"></button>
+            <button id="paper" class="selection"><img src="paper.PNG" class="playerSelection"  ></button>
+            <button id="scissors" class="selection"><img src="scissors.PNG" class="playerSelection" ></button>
 
+
+        </div>
+        <div id="gameArea">
+            <img id="playerImage" class="playerSelection" src="">
+            <img id="computerImage" class="playerSelection" src="">
+        </div>
+
+
+        
     </body>
+    <script>
+        const selections = document.querySelectorAll('.selection')
+        let gameCount = 0;
+        let playerScore = 0;
+        let compScore = 0; 
+        let gameResult = document.getElementById('gameResult');
+        let totalScore = document.getElementById('totalScore');
+        let printPlayer = document.getElementById('printPlayer')
+        let printComp = document.getElementById('printComp')
+        selections.forEach(selection => {
+            selection.addEventListener('click', (e) =>  {
+                let compChoice = computerPlay();
+                playRound(selection.id, compChoice);
+                totalScore.innerHTML = gameCount.toString() + "/5";
+                printPlayer.innerHTML = playerScore.toString();
+                printComp.innerHTML = compScore.toString();
+
+                displayChoices(selection.id, compChoice);
+                game(compScore,playerScore);
+            });
+        });
+        
+        
+        function computerPlay(){
+            let choices = ['rock', 'paper', 'scissors'];
+            let random = Math.floor(Math.random() * Math.floor(3));
+            let result = choices[random];
+            return result;
+            
+        }
+
+        //compares players and computers selection to determine the winner of that round.
+        function playRound(playerSelection, compSelection) {
+    
+            let possibleGame = [["rock","rock"],["rock","paper"],["rock","scissors"],["paper","paper"],["paper","rock"],
+                    ["paper","scissors"],["scissors","scissors"],["scissors","rock"],["scissors","paper"]];
+            let currentGame = [playerSelection, compSelection];
+            let tempArr = [];
+            
+            
+            //for every possible game scenario
+            for(let i = 0; i < possibleGame.length; i++){
+                //temporary array to hold each individual game scenario to be compared to the current game.
+                tempArr = possibleGame[i];
+                //once the loop has gone through possibleGame array and found a match to current game.
+                if(currentGame[0] == tempArr[0] && currentGame[1] == tempArr[1]){
+                    //if current game matches element at 0,3 or 6 of possibleGame array, the game is a draw.
+                    if(tempArr == possibleGame[0] || tempArr == possibleGame[3] || tempArr == possibleGame[6]){
+                        
+                        gameResult.innerHTML = currentGame[0] + " matches " + currentGame[1] + ", Play again";
+                        console.log(currentGame[0] + " matches " + currentGame[1] + ", Play again");
+
+                    //if current game matches element at 1, 5 or 7, wins, increase computer score.
+                    } else if(tempArr == possibleGame[1] || tempArr == possibleGame[5] || tempArr == possibleGame[7]){
+                        
+                        gameResult.innerHTML = currentGame[1] + " beats " + currentGame[0] + ", computer wins!";
+                        console.log(currentGame[1] + " beats " + currentGame[0] + ", you loose!");
+                        gameCount++;
+                        compScore++;
+                    //if current game matches element at 2, 4 or 8 of possibleGame array, the game is a draw.
+                    } else {
+                        
+                        gameResult.innerHTML = currentGame[0] + " beats " + currentGame[1] + ", you win!";
+                        console.log(currentGame[0] + " beats " + currentGame[1] + ", you win!");
+                        playerScore++;
+                        gameCount++;
+                    }
+                }
+            }
+
+            
+
+        }
+
+        //keeps track of points and displays winner either after 5 games or if a player is two clear points ahead.
+        function game(compScore, playerScore){  
+            
+            let compClearPoints = 0;
+            let playerClearPoints = 0;
+            //checks if a player is two clear points ahead
+            if(compScore > playerScore){
+            compClearPoints = compScore - playerScore;
+            } else {
+                playerClearPoints = playerScore - compScore; 
+            }
+            if(compClearPoints >= 2 || playerClearPoints >= 2){
+                gameCount = 5;
+            }
+            //best out of five or 2 clear points
+            if(gameCount == 5){
+                if(compScore > playerScore){
+                    //TODO
+                    console.log("The machines have won, score: \n Computer: " + compScore + "\nYou: " + playerScore  );
+                } else if(playerScore > compScore){
+                    //TODO
+                    console.log("Humankind has prevailed, score: \nYou: " + playerScore + "\nComputer: " + compScore );
+                }
+
+            }
+        }
+
+        function displayChoices(playerChoice, computerChoice){
+            const playerImg = document.getElementById('playerImage');
+            const compImg = document.getElementById('computerImage');
+            if(playerChoice == "rock"){
+                playerImg.setAttribute('src', 'rock.png');
+            } else if(playerChoice == 'paper'){
+                playerImg.setAttribute('src', 'paper.png');
+            } else {
+                playerImg.setAttribute('src', 'scissors.png');
+            }
+            if(computerChoice == 'rock'){
+                compImg.setAttribute('src', 'rock.png');
+            } else if(playerChoice == 'paper'){
+                compImg.setAttribute('src', 'paper.png');
+            } else {
+                compImg.setAttribute('src', 'scissors.png');
+            }
+        }
+    </script>
 </html>

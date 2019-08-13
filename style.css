@@ -1,0 +1,14 @@
+.rock{
+    background-position: 650px 600px ;
+    background-size: 50%;
+}
+
+.paper{
+    background-position: 800px 500px;
+    background-size: 50%;
+}
+
+.scissors{
+    background-position: 800px 700px;
+    background-size: 50%;
+}
